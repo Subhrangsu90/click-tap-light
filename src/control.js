@@ -25,15 +25,19 @@ const fields = {
   right: document.getElementById('right'),
   middle: document.getElementById('middle'),
   test: document.getElementById('test'),
+  quickPreview: document.getElementById('quickPreview'),
   reset: document.getElementById('reset'),
+  themeToggle: document.getElementById('themeToggle'),
+  minimizeWindow: document.getElementById('minimizeWindow'),
+  closeWindow: document.getElementById('closeWindow'),
   platformStatus: document.getElementById('platformStatus'),
   platformMessage: document.getElementById('platformMessage')
 };
 
 const presets = {
   demo: {
-    color: '#00d4ff',
-    secondaryColor: '#ffffff',
+    color: '#655391',
+    secondaryColor: '#fbf8ff',
     size: 116,
     duration: 720,
     stroke: 5,
@@ -48,8 +52,8 @@ const presets = {
     followThrough: true
   },
   review: {
-    color: '#ffcc00',
-    secondaryColor: '#101418',
+    color: '#b8edf0',
+    secondaryColor: '#211d2b',
     size: 132,
     duration: 880,
     stroke: 6,
@@ -64,7 +68,7 @@ const presets = {
     followThrough: false
   },
   subtle: {
-    color: '#7cf7b5',
+    color: '#cdbbf4',
     secondaryColor: '#ffffff',
     size: 76,
     duration: 500,
@@ -85,6 +89,16 @@ let state = {
   enabled: true,
   settings: {}
 };
+
+const themeStorageKey = 'clicklight-theme-v2';
+
+function applyTheme(theme) {
+  const safeTheme = theme === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = safeTheme;
+  fields.themeToggle.textContent = safeTheme === 'light' ? '☀' : '☾';
+  fields.themeToggle.setAttribute('aria-label', `Use ${safeTheme === 'light' ? 'dark' : 'light'} theme`);
+  localStorage.setItem(themeStorageKey, safeTheme);
+}
 
 function applyState(nextState) {
   state = nextState;
@@ -187,8 +201,24 @@ fields.test.addEventListener('click', () => {
   window.clickTapLight.testClick();
 });
 
+fields.quickPreview.addEventListener('click', () => {
+  window.clickTapLight.testClick();
+});
+
 fields.reset.addEventListener('click', () => {
   window.clickTapLight.resetSettings();
+});
+
+fields.themeToggle.addEventListener('click', () => {
+  applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+});
+
+fields.minimizeWindow.addEventListener('click', () => {
+  window.clickTapLight.minimizeControls();
+});
+
+fields.closeWindow.addEventListener('click', () => {
+  window.clickTapLight.closeControls();
 });
 
 for (const presetButton of document.querySelectorAll('.preset')) {
@@ -201,5 +231,6 @@ for (const presetButton of document.querySelectorAll('.preset')) {
   });
 }
 
+applyTheme(localStorage.getItem(themeStorageKey) || 'light');
 window.clickTapLight.onState(applyState);
 window.clickTapLight.getState().then(applyState);

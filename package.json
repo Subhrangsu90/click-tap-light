@@ -1,5 +1,5 @@
 {
-  "name": "cuehalo",
+  "name": "clicklight",
   "version": "0.1.0",
   "description": "A polished Windows tray app that makes clicks easy to follow during demos, reviews, and screen sharing.",
   "main": "src/main.js",
@@ -21,8 +21,8 @@
     "electron-builder": "^24.13.3"
   },
   "build": {
-    "appId": "com.cuehalo.app",
-    "productName": "CueHalo",
+    "appId": "com.clicklight.app",
+    "productName": "ClickLight",
     "files": [
       "build/icon.ico",
       "src/**/*",

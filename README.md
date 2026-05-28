@@ -1,6 +1,6 @@
-# CueHalo
+# ClickLight
 
-CueHalo is a polished Windows tray app that makes every click easy to follow during live demos, screen sharing, UX reviews, training, and walkthroughs.
+ClickLight is a polished Windows tray app that makes every click easy to follow during live demos, screen sharing, UX reviews, training, and walkthroughs.
 
 This is built with Electron because a desktop overlay needs Windows APIs that React Native does not handle cleanly on its own.
 
@@ -17,8 +17,8 @@ This is built with Electron because a desktop overlay needs Windows APIs that Re
 - Hotkeys: `Ctrl+Alt+H` toggles highlighting, `Ctrl+Alt+C` opens controls
 - Settings are saved automatically
 - Multi-monitor support
-- Material-inspired controller UI
-- Custom CueHalo app and tray icon
+- Compact floating controller UI
+- Custom ClickLight app and tray icon
 - Optional launch at Windows startup
 - Optional keyboard shortcut overlay for visible shortcuts like `Ctrl + S`
 
@@ -31,7 +31,7 @@ npm start
 
 The app opens a controls window and adds a tray icon. Close the controls window to keep the tray app running.
 
-To open the controls again, click the CueHalo tray icon near the Windows clock, choose **Show Controls** from its tray menu, or press `Ctrl+Alt+C`.
+To open the controls again, click the ClickLight tray icon near the Windows clock, choose **Show Controls** from its tray menu, or press `Ctrl+Alt+C`.
 
 ## Build a Windows Portable App
 

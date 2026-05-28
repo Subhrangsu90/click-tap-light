@@ -1,8 +1,8 @@
 const stage = document.getElementById('stage');
 let enabled = true;
 let currentSettings = {
-  color: '#00d4ff',
-  secondaryColor: '#ffffff',
+  color: '#655391',
+  secondaryColor: '#fbf8ff',
   size: 96,
   duration: 620,
   stroke: 4,

@@ -9,8 +9,8 @@ let hookProcess;
 let enabled = true;
 const platformSupported = process.platform === 'win32';
 const defaultSettings = {
-  color: '#00d4ff',
-  secondaryColor: '#ffffff',
+  color: '#655391',
+  secondaryColor: '#fbf8ff',
   labelText: 'Click',
   size: 96,
   duration: 620,
@@ -40,9 +40,9 @@ const iconPath = path.join(__dirname, '..', 'build', 'icon.ico');
 function createTrayIcon() {
   const svg = `
     <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
-      <rect width="32" height="32" rx="7" fill="#101820"/>
-      <circle cx="16" cy="16" r="8" fill="none" stroke="#00d4ff" stroke-width="3"/>
-      <circle cx="16" cy="16" r="3" fill="#ffffff"/>
+      <rect width="32" height="32" rx="7" fill="#655391"/>
+      <circle cx="16" cy="16" r="8" fill="none" stroke="#cdbbf4" stroke-width="3"/>
+      <circle cx="16" cy="16" r="3" fill="#fbf8ff"/>
     </svg>`;
   const icon = nativeImage.createFromPath(iconPath);
   return icon.isEmpty() ? nativeImage.createFromDataURL(`data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`) : icon;
@@ -62,12 +62,12 @@ function updateTrayMenu() {
         updateTrayMenu();
       }
     },
-    { label: 'Show Controls', click: showControlWindow },
+    { label: 'Toggle Controls', click: toggleControlWindow },
     { label: 'Test Highlight', click: () => emitClick({ button: 'left', x: 160, y: 160, test: true }) },
     { type: 'separator' },
     { label: platformSupported ? 'Mouse Hook: Windows active' : 'Mouse Hook: Windows only', enabled: false },
     { label: 'Toggle Hotkey: Ctrl+Alt+H', enabled: false },
-    { label: 'Controls Hotkey: Ctrl+Alt+C', enabled: false },
+    { label: 'Toggle Controls: Ctrl+Alt+C', enabled: false },
     { type: 'separator' },
     { label: 'Quit', click: () => app.quit() }
   ]));
@@ -75,18 +75,24 @@ function updateTrayMenu() {
 
 function showControlWindow() {
   if (controlWindow) {
+    if (controlWindow.isMinimized()) controlWindow.restore();
     controlWindow.show();
     controlWindow.focus();
     return;
   }
 
   controlWindow = new BrowserWindow({
-    width: 900,
-    height: 720,
-    minWidth: 760,
-    minHeight: 620,
-    title: 'CueHalo',
-    backgroundColor: '#fffbff',
+    width: 690,
+    height: 398,
+    minWidth: 520,
+    minHeight: 374,
+    title: 'ClickLight',
+    frame: false,
+    transparent: true,
+    resizable: false,
+    maximizable: false,
+    autoHideMenuBar: true,
+    backgroundColor: '#00000000',
     icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
@@ -103,6 +109,20 @@ function showControlWindow() {
   controlWindow.on('closed', () => {
     controlWindow = null;
   });
+}
+
+function toggleControlWindow() {
+  if (!controlWindow || controlWindow.isDestroyed()) {
+    showControlWindow();
+    return;
+  }
+
+  if (controlWindow.isVisible() && !controlWindow.isMinimized()) {
+    controlWindow.hide();
+    return;
+  }
+
+  showControlWindow();
 }
 
 function createOverlay(display) {
@@ -298,8 +318,8 @@ app.whenReady().then(() => {
   loadSavedState();
 
   tray = new Tray(createTrayIcon());
-  tray.setToolTip('CueHalo');
-  tray.on('click', showControlWindow);
+  tray.setToolTip('ClickLight');
+  tray.on('click', toggleControlWindow);
   updateTrayMenu();
 
   syncOverlays();
@@ -316,7 +336,7 @@ app.whenReady().then(() => {
     broadcastState();
     updateTrayMenu();
   });
-  globalShortcut.register('Control+Alt+C', showControlWindow);
+  globalShortcut.register('Control+Alt+C', toggleControlWindow);
 });
 
 ipcMain.handle('get-state', () => getStatePayload());
@@ -340,6 +360,11 @@ ipcMain.on('reset-settings', () => {
   broadcastState();
 });
 ipcMain.on('test-click', () => emitClick({ button: 'left', x: 180, y: 180, test: true }));
+ipcMain.on('window-control', (_event, action) => {
+  if (!controlWindow || controlWindow.isDestroyed()) return;
+  if (action === 'minimize') controlWindow.minimize();
+  if (action === 'close') controlWindow.hide();
+});
 
 app.on('before-quit', () => {
   app.isQuitting = true;
