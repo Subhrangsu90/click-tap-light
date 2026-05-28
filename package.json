@@ -1,0 +1,37 @@
+{
+  "name": "cuehalo",
+  "version": "0.1.0",
+  "description": "A polished Windows tray app that makes clicks easy to follow during demos, reviews, and screen sharing.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "package:win": "electron-builder --win portable"
+  },
+  "keywords": [
+    "windows",
+    "screen-sharing",
+    "click-highlight",
+    "electron"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.cuehalo.app",
+    "productName": "CueHalo",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        "portable"
+      ]
+    }
+  }
+}
