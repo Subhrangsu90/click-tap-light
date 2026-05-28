@@ -1,6 +1,6 @@
-# ClickLight
+# ClickGlow
 
-ClickLight is a polished Windows tray app that makes every click easy to follow during live demos, screen sharing, UX reviews, training, and walkthroughs.
+ClickGlow is a polished Windows tray app that makes every click easy to follow during live demos, screen sharing, UX reviews, training, and walkthroughs.
 
 This is built with Electron because a desktop overlay needs Windows APIs that React Native does not handle cleanly on its own.
 
@@ -18,7 +18,8 @@ This is built with Electron because a desktop overlay needs Windows APIs that Re
 - Settings are saved automatically
 - Multi-monitor support
 - Compact floating controller UI
-- Custom ClickLight app and tray icon
+- Optional pinned controller window
+- Custom ClickGlow app and tray icon
 - Optional launch at Windows startup
 - Optional keyboard shortcut overlay for visible shortcuts like `Ctrl + S`
 
@@ -31,7 +32,27 @@ npm start
 
 The app opens a controls window and adds a tray icon. Close the controls window to keep the tray app running.
 
-To open the controls again, click the ClickLight tray icon near the Windows clock, choose **Show Controls** from its tray menu, or press `Ctrl+Alt+C`.
+To open the controls again, click the ClickGlow tray icon near the Windows clock, choose **Toggle Controls** from its tray menu, or press `Ctrl+Alt+C`.
+
+For development with automatic restart on file changes:
+
+```powershell
+npm run dev
+```
+
+## Project Structure
+
+```text
+src/
+  main.js              Electron main process, tray, windows, shortcuts
+  preload.js           Safe IPC bridge for renderer windows
+  control/             Controller window HTML, CSS, and UI logic
+  overlay/             Transparent click/shortcut overlay renderer
+  hooks/               Windows mouse and keyboard hook helper
+build/
+  icon.svg
+  icon.ico
+```
 
 ## Build a Windows Portable App
 
@@ -44,5 +65,5 @@ The packaged app will be created under `dist`.
 ## Notes
 
 - Windows may ask for permission the first time PowerShell runs the mouse-hook helper.
-- Some elevated/admin apps can block normal-process global hooks. Run Click Tap Light as administrator if you need highlighting over admin windows.
+- Some elevated/admin apps can block normal-process global hooks. Run ClickGlow as administrator if you need highlighting over admin windows.
 - The current global click detector is Windows-only. The Electron shell and overlay can be adapted for macOS/Linux, but those platforms need their own native mouse hook helper.

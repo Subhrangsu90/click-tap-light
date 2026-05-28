@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('clickTapLight', {
   setEnabled: (value) => ipcRenderer.send('set-enabled', value),
   setLaunchAtStartup: (value) => ipcRenderer.send('set-launch-at-startup', value),
   setSettings: (value) => ipcRenderer.send('set-settings', value),
+  noteControlInteraction: () => ipcRenderer.send('control-interaction'),
   resetSettings: () => ipcRenderer.send('reset-settings'),
   testClick: () => ipcRenderer.send('test-click'),
   minimizeControls: () => ipcRenderer.send('window-control', 'minimize'),
