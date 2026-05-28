@@ -8,6 +8,8 @@ let currentSettings = {
   stroke: 4,
   opacity: 96,
   glow: 32,
+  showKeystrokes: true,
+  keystrokeDuration: 1100,
   showLabel: true,
   labelText: 'Click'
 };
@@ -43,9 +45,21 @@ function renderPulse(event) {
   stage.appendChild(pulse);
 }
 
+function renderShortcut(event) {
+  if (!enabled || !currentSettings.showKeystrokes || !event.keys) return;
+
+  const shortcut = document.createElement('div');
+  shortcut.className = 'shortcut';
+  shortcut.textContent = event.keys;
+  shortcut.style.setProperty('--duration', `${event.duration || currentSettings.keystrokeDuration}ms`);
+  shortcut.addEventListener('animationend', () => shortcut.remove(), { once: true });
+  stage.appendChild(shortcut);
+}
+
 window.clickTapLight.onState((state) => {
   enabled = state.enabled;
   currentSettings = state.settings;
 });
 
 window.clickTapLight.onClick(renderPulse);
+window.clickTapLight.onShortcut(renderShortcut);

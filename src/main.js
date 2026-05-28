@@ -17,6 +17,8 @@ const defaultSettings = {
   stroke: 4,
   opacity: 96,
   glow: 32,
+  showKeystrokes: true,
+  keystrokeDuration: 1100,
   showLabel: true,
   labelPosition: 'bottom',
   doubleRing: true,
@@ -33,6 +35,7 @@ let settingsPath;
 const overlayHtml = path.join(__dirname, 'overlay.html');
 const controlHtml = path.join(__dirname, 'control.html');
 const hookScript = path.join(__dirname, 'mouse-hook.ps1');
+const iconPath = path.join(__dirname, '..', 'build', 'icon.ico');
 
 function createTrayIcon() {
   const svg = `
@@ -41,7 +44,8 @@ function createTrayIcon() {
       <circle cx="16" cy="16" r="8" fill="none" stroke="#00d4ff" stroke-width="3"/>
       <circle cx="16" cy="16" r="3" fill="#ffffff"/>
     </svg>`;
-  return nativeImage.createFromDataURL(`data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`);
+  const icon = nativeImage.createFromPath(iconPath);
+  return icon.isEmpty() ? nativeImage.createFromDataURL(`data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`) : icon;
 }
 
 function updateTrayMenu() {
@@ -83,6 +87,7 @@ function showControlWindow() {
     minHeight: 620,
     title: 'CueHalo',
     backgroundColor: '#fffbff',
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
@@ -175,8 +180,23 @@ function getStatePayload() {
       message: platformSupported
         ? 'Global click highlighting is active on Windows.'
         : 'Global click highlighting needs a native mouse hook for this OS. The overlay UI can run, but real click detection is Windows-only in this version.'
-    }
+    },
+    launchAtStartup: getLaunchAtStartup()
   };
+}
+
+function getLaunchAtStartup() {
+  if (!platformSupported) return false;
+  return app.getLoginItemSettings().openAtLogin;
+}
+
+function setLaunchAtStartup(value) {
+  if (!platformSupported) return;
+  app.setLoginItemSettings({
+    openAtLogin: Boolean(value),
+    path: process.execPath
+  });
+  broadcastState();
 }
 
 function loadSavedState() {
@@ -224,6 +244,19 @@ function emitClick(click) {
   }
 }
 
+function emitShortcut(shortcut) {
+  if (!enabled || !settings.showKeystrokes || !shortcut.keys) return;
+
+  const payload = {
+    keys: shortcut.keys,
+    duration: settings.keystrokeDuration
+  };
+
+  for (const win of overlays.values()) {
+    if (!win.isDestroyed()) win.webContents.send('shortcut', payload);
+  }
+}
+
 function startMouseHook() {
   if (hookProcess) return;
 
@@ -248,6 +281,7 @@ function startMouseHook() {
       try {
         const event = JSON.parse(line);
         if (event.type === 'click') emitClick(event);
+        if (event.type === 'shortcut') emitShortcut(event);
       } catch {
         // Ignore malformed helper output.
       }
@@ -291,6 +325,9 @@ ipcMain.on('set-enabled', (_event, value) => {
   saveState();
   broadcastState();
   updateTrayMenu();
+});
+ipcMain.on('set-launch-at-startup', (_event, value) => {
+  setLaunchAtStartup(value);
 });
 ipcMain.on('set-settings', (_event, value) => {
   settings = { ...settings, ...value };

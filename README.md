@@ -18,6 +18,9 @@ This is built with Electron because a desktop overlay needs Windows APIs that Re
 - Settings are saved automatically
 - Multi-monitor support
 - Material-inspired controller UI
+- Custom CueHalo app and tray icon
+- Optional launch at Windows startup
+- Optional keyboard shortcut overlay for visible shortcuts like `Ctrl + S`
 
 ## Run
 

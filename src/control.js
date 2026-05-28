@@ -7,14 +7,18 @@ const fields = {
   stroke: document.getElementById('stroke'),
   glow: document.getElementById('glow'),
   opacity: document.getElementById('opacity'),
+  keystrokeDuration: document.getElementById('keystrokeDuration'),
   sizeValue: document.getElementById('sizeValue'),
   durationValue: document.getElementById('durationValue'),
   strokeValue: document.getElementById('strokeValue'),
   glowValue: document.getElementById('glowValue'),
   opacityValue: document.getElementById('opacityValue'),
+  keystrokeDurationValue: document.getElementById('keystrokeDurationValue'),
   labelPosition: document.getElementById('labelPosition'),
   labelText: document.getElementById('labelText'),
   showLabel: document.getElementById('showLabel'),
+  showKeystrokes: document.getElementById('showKeystrokes'),
+  launchAtStartup: document.getElementById('launchAtStartup'),
   doubleRing: document.getElementById('doubleRing'),
   followThrough: document.getElementById('followThrough'),
   left: document.getElementById('left'),
@@ -35,6 +39,8 @@ const presets = {
     stroke: 5,
     opacity: 100,
     glow: 44,
+    showKeystrokes: true,
+    keystrokeDuration: 1100,
     showLabel: true,
     labelText: 'Click',
     labelPosition: 'bottom',
@@ -49,6 +55,8 @@ const presets = {
     stroke: 6,
     opacity: 94,
     glow: 36,
+    showKeystrokes: true,
+    keystrokeDuration: 1400,
     showLabel: true,
     labelText: 'Focus',
     labelPosition: 'top',
@@ -63,6 +71,8 @@ const presets = {
     stroke: 3,
     opacity: 76,
     glow: 12,
+    showKeystrokes: false,
+    keystrokeDuration: 800,
     showLabel: false,
     labelText: '',
     labelPosition: 'bottom',
@@ -90,9 +100,12 @@ function applyState(nextState) {
   fields.stroke.value = settings.stroke;
   fields.glow.value = settings.glow;
   fields.opacity.value = settings.opacity;
+  fields.keystrokeDuration.value = settings.keystrokeDuration;
   fields.labelPosition.value = settings.labelPosition;
   fields.labelText.value = settings.labelText || '';
   fields.showLabel.checked = settings.showLabel;
+  fields.showKeystrokes.checked = settings.showKeystrokes;
+  fields.launchAtStartup.checked = state.launchAtStartup;
   fields.doubleRing.checked = settings.doubleRing;
   fields.followThrough.checked = settings.followThrough;
   fields.left.checked = settings.highlightLeft;
@@ -103,6 +116,7 @@ function applyState(nextState) {
   fields.strokeValue.value = `${settings.stroke}px`;
   fields.glowValue.value = `${settings.glow}px`;
   fields.opacityValue.value = `${settings.opacity}%`;
+  fields.keystrokeDurationValue.value = `${settings.keystrokeDuration}ms`;
   document.documentElement.style.setProperty('--accent', settings.color);
   document.documentElement.style.setProperty('--soft', `${settings.color}24`);
 }
@@ -116,9 +130,11 @@ function sendSettings() {
     stroke: Number(fields.stroke.value),
     glow: Number(fields.glow.value),
     opacity: Number(fields.opacity.value),
+    keystrokeDuration: Number(fields.keystrokeDuration.value),
     labelPosition: fields.labelPosition.value,
     labelText: fields.labelText.value.trim().slice(0, 18),
     showLabel: fields.showLabel.checked,
+    showKeystrokes: fields.showKeystrokes.checked,
     doubleRing: fields.doubleRing.checked,
     followThrough: fields.followThrough.checked,
     highlightLeft: fields.left.checked,
@@ -131,12 +147,17 @@ function sendSettings() {
   fields.strokeValue.value = `${settings.stroke}px`;
   fields.glowValue.value = `${settings.glow}px`;
   fields.opacityValue.value = `${settings.opacity}%`;
+  fields.keystrokeDurationValue.value = `${settings.keystrokeDuration}ms`;
   document.documentElement.style.setProperty('--accent', settings.color);
   window.clickTapLight.setSettings(settings);
 }
 
 fields.enabled.addEventListener('change', () => {
   window.clickTapLight.setEnabled(fields.enabled.checked);
+});
+
+fields.launchAtStartup.addEventListener('change', () => {
+  window.clickTapLight.setLaunchAtStartup(fields.launchAtStartup.checked);
 });
 
 for (const field of [
@@ -147,9 +168,11 @@ for (const field of [
   fields.stroke,
   fields.glow,
   fields.opacity,
+  fields.keystrokeDuration,
   fields.labelPosition,
   fields.labelText,
   fields.showLabel,
+  fields.showKeystrokes,
   fields.doubleRing,
   fields.followThrough,
   fields.left,

@@ -24,10 +24,12 @@
     "appId": "com.cuehalo.app",
     "productName": "CueHalo",
     "files": [
+      "build/icon.ico",
       "src/**/*",
       "package.json"
     ],
     "win": {
+      "icon": "build/icon.ico",
       "signAndEditExecutable": false,
       "target": [
         "portable"

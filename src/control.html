@@ -115,6 +115,12 @@
             </label>
 
             <label>
+              <span>Shortcut overlay time</span>
+              <input id="keystrokeDuration" type="range" min="500" max="2400" step="100" />
+              <output id="keystrokeDurationValue"></output>
+            </label>
+
+            <label>
               <span>Label position</span>
               <select id="labelPosition">
                 <option value="bottom">Bottom</option>
@@ -129,6 +135,8 @@
 
             <div class="check-row">
               <label><input id="showLabel" type="checkbox" />Labels</label>
+              <label><input id="showKeystrokes" type="checkbox" />Keyboard overlay</label>
+              <label><input id="launchAtStartup" type="checkbox" />Launch at startup</label>
               <label><input id="doubleRing" type="checkbox" />Double ring</label>
               <label><input id="followThrough" type="checkbox" />Center flash</label>
               <label><input id="left" type="checkbox" />Left click</label>
