@@ -8,7 +8,7 @@ const fields = {
   statusPill: document.getElementById('statusPill')
 };
 
-const themeStorageKey = 'click-glow-theme-v1';
+const themeStorageKey = 'ripple-click-theme-v1';
 let state = {
   enabled: true,
   settings: {}

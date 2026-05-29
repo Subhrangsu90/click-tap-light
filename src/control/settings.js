@@ -107,7 +107,7 @@ let state = {
 };
 let activePreset = "demo";
 
-const themeStorageKey = "click-glow-theme-v1";
+const themeStorageKey = "ripple-click-theme-v1";
 
 document.addEventListener(
 	"pointerdown",

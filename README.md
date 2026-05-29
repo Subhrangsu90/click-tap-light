@@ -10,7 +10,8 @@ This is built with Electron because a desktop overlay needs Windows APIs that Re
 - Click-through, so it never blocks your real apps
 - Global left, right, and middle click detection
 - Tray menu toggle
-- Compact controls window
+- Compact controller window for daily use
+- Full settings window with General, Clicks, Ripple, and Labels sections
 - Adjustable color, ring size, fade speed, and custom label text
 - Advanced stroke, glow, opacity, double-ring, center-flash, and label-position controls
 - Presets for demo, review, and subtle highlighting
@@ -32,7 +33,9 @@ npm start
 
 The app opens a controls window and adds a tray icon. Close the controls window to keep the tray app running.
 
-To open the controls again, click the RippleClick tray icon near the Windows clock, choose **Toggle Controls** from its tray menu, or press `Ctrl+Alt+C`.
+To open the controller again, click the RippleClick tray icon near the Windows clock, choose **Open Controller** from its tray menu, or press `Ctrl+Alt+C`.
+
+Use **Open Settings** from the tray menu or the controller settings button to adjust detailed ripple behavior.
 
 For development with automatic restart on file changes:
 

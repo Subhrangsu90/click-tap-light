@@ -1,7 +1,7 @@
 {
-	"name": "click-glow",
-	"version": "0.1.0",
-	"description": "A polished Windows tray app that makes clicks easy to follow during demos, reviews, and screen sharing.",
+	"name": "ripple-click",
+	"version": "1.0.0",
+	"description": "A polished Windows tray app that makes clicks easy to follow during demos, reviews, training, and screen sharing.",
 	"main": "src/main.js",
 	"scripts": {
 		"start": "electron .",
@@ -22,7 +22,7 @@
 		"electron-builder": "^24.13.3"
 	},
 	"build": {
-		"appId": "com.RippleClick.app",
+		"appId": "com.rippleclick.app",
 		"productName": "RippleClick",
 		"files": [
 			"build/icon.ico",

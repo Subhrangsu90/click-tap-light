@@ -76,7 +76,7 @@ function updateTrayMenu() {
 	tray.setContextMenu(
 		Menu.buildFromTemplate([
 			{
-				label: enabled ? "Click Highlight: On" : "Click Highlight: Off",
+				label: enabled ? "RippleClick: On" : "RippleClick: Off",
 				type: "checkbox",
 				checked: enabled,
 				click: () => {
@@ -85,10 +85,11 @@ function updateTrayMenu() {
 					updateTrayMenu();
 				},
 			},
-			{ label: "Toggle Controls", click: toggleControlWindow },
-			{ label: "Settings", click: showSettingsWindow },
+			{ type: "separator" },
+			{ label: "Open Controller", click: showControlWindow },
+			{ label: "Open Settings", click: showSettingsWindow },
 			{
-				label: "Test Highlight",
+				label: "Preview Ripple",
 				click: () =>
 					emitClick({ button: "left", x: 160, y: 160, test: true }),
 			},
@@ -99,8 +100,8 @@ function updateTrayMenu() {
 					: "Mouse Hook: Windows only",
 				enabled: false,
 			},
-			{ label: "Toggle Hotkey: Ctrl+Alt+H", enabled: false },
-			{ label: "Toggle Controls: Ctrl+Alt+C", enabled: false },
+			{ label: "Toggle Ripple: Ctrl+Alt+H", enabled: false },
+			{ label: "Open Controller: Ctrl+Alt+C", enabled: false },
 			{ type: "separator" },
 			{ label: "Quit", click: () => app.quit() },
 		]),
@@ -495,6 +496,7 @@ function startMouseHook() {
 }
 
 app.whenReady().then(() => {
+	if (platformSupported) app.setAppUserModelId("com.rippleclick.app");
 	loadSavedState();
 
 	tray = new Tray(createTrayIcon());
