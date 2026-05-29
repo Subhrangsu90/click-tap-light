@@ -1,8 +1,12 @@
 const stage = document.getElementById('stage');
 let enabled = true;
 let currentSettings = {
-  color: '#655391',
-  secondaryColor: '#fbf8ff',
+  color: '#88a97c',
+  secondaryColor: '#f8fbf5',
+  colorMode: 'same',
+  leftColor: '#88a97c',
+  rightColor: '#f87171',
+  middleColor: '#60a5fa',
   size: 96,
   duration: 620,
   stroke: 4,
@@ -21,16 +25,24 @@ function labelFor(button, settings) {
   return 'Click';
 }
 
+function colorFor(button, settings) {
+  if (settings.colorMode !== 'separate') return settings.color;
+  if (button === 'right') return settings.rightColor || settings.color;
+  if (button === 'middle') return settings.middleColor || settings.color;
+  return settings.leftColor || settings.color;
+}
+
 function renderPulse(event) {
   if (!enabled) return;
 
   const settings = event.settings || currentSettings;
+  const color = colorFor(event.button, settings);
   const pulse = document.createElement('div');
   pulse.className = settings.followThrough ? 'pulse follow' : 'pulse';
   pulse.dataset.button = labelFor(event.button, settings);
   pulse.style.setProperty('--x', `${event.x}px`);
   pulse.style.setProperty('--y', `${event.y}px`);
-  pulse.style.setProperty('--color', settings.color);
+  pulse.style.setProperty('--color', color);
   pulse.style.setProperty('--secondary-color', settings.secondaryColor);
   pulse.style.setProperty('--size', `${settings.size}px`);
   pulse.style.setProperty('--duration', `${settings.duration}ms`);

@@ -14,13 +14,18 @@ const fs = require("node:fs");
 
 let tray;
 let controlWindow;
+let settingsWindow;
 let hookProcess;
 let enabled = true;
 let ignoreControlToggleUntil = 0;
 const platformSupported = process.platform === "win32";
 const defaultSettings = {
-	color: "#655391",
-	secondaryColor: "#fbf8ff",
+	color: "#88a97c",
+	secondaryColor: "#f8fbf5",
+	colorMode: "same",
+	leftColor: "#88a97c",
+	rightColor: "#f87171",
+	middleColor: "#60a5fa",
 	labelText: "Click",
 	size: 96,
 	duration: 620,
@@ -46,15 +51,16 @@ let settingsPath;
 
 const overlayHtml = path.join(__dirname, "overlay", "overlay.html");
 const controlHtml = path.join(__dirname, "control", "control.html");
+const settingsHtml = path.join(__dirname, "control", "settings.html");
 const hookScript = path.join(__dirname, "hooks", "mouse-hook.ps1");
 const iconPath = path.join(__dirname, "..", "build", "icon.ico");
 
 function createTrayIcon() {
 	const svg = `
     <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
-      <rect width="32" height="32" rx="7" fill="#655391"/>
-      <circle cx="16" cy="16" r="8" fill="none" stroke="#cdbbf4" stroke-width="3"/>
-      <circle cx="16" cy="16" r="3" fill="#fbf8ff"/>
+      <rect width="32" height="32" rx="7" fill="#88a97c"/>
+      <circle cx="16" cy="16" r="8" fill="none" stroke="#d7ebd0" stroke-width="3"/>
+      <circle cx="16" cy="16" r="3" fill="#f8fbf5"/>
     </svg>`;
 	const icon = nativeImage.createFromPath(iconPath);
 	return icon.isEmpty()
@@ -80,6 +86,7 @@ function updateTrayMenu() {
 				},
 			},
 			{ label: "Toggle Controls", click: toggleControlWindow },
+			{ label: "Settings", click: showSettingsWindow },
 			{
 				label: "Test Highlight",
 				click: () =>
@@ -104,23 +111,31 @@ function showControlWindow() {
 	if (controlWindow) {
 		if (controlWindow.isMinimized()) controlWindow.restore();
 		controlWindow.show();
-		controlWindow.focus();
+		applyControlWindowOptions();
+		if (settings.controlAlwaysOnTop) {
+			controlWindow.moveTop();
+		} else {
+			controlWindow.focus();
+		}
 		return;
 	}
 
 	const savedBounds = getUsableControlBounds();
+	const savedPosition = savedBounds
+		? { x: savedBounds.x, y: savedBounds.y }
+		: {};
 	controlWindow = new BrowserWindow({
-		width: 690,
-		height: 492,
-		...(savedBounds || {}),
-		minWidth: 520,
-		minHeight: 468,
-		title: "ClickGlow",
+		width: 430,
+		height: 174,
+		...savedPosition,
+		minWidth: 390,
+		minHeight: 156,
+		title: "RippleClick",
 		frame: false,
 		transparent: true,
 		resizable: false,
 		maximizable: false,
-		alwaysOnTop: true,
+		alwaysOnTop: settings.controlAlwaysOnTop,
 		autoHideMenuBar: true,
 		backgroundColor: "#00000000",
 		icon: iconPath,
@@ -143,10 +158,62 @@ function showControlWindow() {
 	});
 }
 
+function showSettingsWindow() {
+	if (settingsWindow) {
+		if (settingsWindow.isMinimized()) settingsWindow.restore();
+		settingsWindow.show();
+		settingsWindow.focus();
+		return;
+	}
+
+	settingsWindow = new BrowserWindow({
+		width: 920,
+		height: 680,
+		minWidth: 820,
+		minHeight: 600,
+		title: "RippleClick Settings",
+		frame: false,
+		transparent: true,
+		resizable: true,
+		maximizable: false,
+		alwaysOnTop: false,
+		autoHideMenuBar: true,
+		backgroundColor: "#00000000",
+		icon: iconPath,
+		webPreferences: {
+			preload: path.join(__dirname, "preload.js"),
+		},
+	});
+
+	settingsWindow.loadFile(settingsHtml);
+	settingsWindow.on("close", (event) => {
+		if (!app.isQuitting) {
+			event.preventDefault();
+			settingsWindow.hide();
+		}
+	});
+	settingsWindow.on("closed", () => {
+		settingsWindow = null;
+	});
+}
+
 function applyControlWindowOptions() {
 	if (!controlWindow || controlWindow.isDestroyed()) return;
-	controlWindow.setAlwaysOnTop(true, "screen-saver");
-	controlWindow.moveTop();
+	controlWindow.setAlwaysOnTop(
+		Boolean(settings.controlAlwaysOnTop),
+		"screen-saver",
+	);
+	if (settings.controlAlwaysOnTop) {
+		controlWindow.moveTop();
+	}
+}
+
+function applyOverlayWindowOptions(win) {
+	if (!win || win.isDestroyed()) return;
+	win.setIgnoreMouseEvents(true);
+	win.setAlwaysOnTop(true, "screen-saver");
+	win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+	win.moveTop();
 }
 
 function getUsableControlBounds() {
@@ -170,7 +237,11 @@ function saveControlBounds() {
 }
 
 function isPointInsideControlWindow(point) {
-	if (!controlWindow || controlWindow.isDestroyed() || !controlWindow.isVisible()) {
+	if (
+		!controlWindow ||
+		controlWindow.isDestroyed() ||
+		!controlWindow.isVisible()
+	) {
 		return false;
 	}
 
@@ -191,7 +262,7 @@ function toggleControlWindow() {
 
 	if (controlWindow.isVisible() && !controlWindow.isMinimized()) {
 		if (Date.now() < ignoreControlToggleUntil) {
-			controlWindow.moveTop();
+			if (settings.controlAlwaysOnTop) controlWindow.moveTop();
 			return;
 		}
 		controlWindow.hide();
@@ -220,17 +291,17 @@ function createOverlay(display) {
 		skipTaskbar: true,
 		hasShadow: false,
 		alwaysOnTop: true,
+		backgroundColor: "#00000000",
 		webPreferences: {
 			preload: path.join(__dirname, "preload.js"),
 		},
 	});
 
-	win.setIgnoreMouseEvents(true);
-	win.setAlwaysOnTop(true, "floating");
-	win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+	applyOverlayWindowOptions(win);
 	win.loadFile(overlayHtml);
 	win.once("ready-to-show", () => {
 		win.showInactive();
+		applyOverlayWindowOptions(win);
 		win.webContents.send("state", getStatePayload());
 	});
 	win.on("closed", () => overlays.delete(id));
@@ -246,6 +317,7 @@ function syncOverlays() {
 	for (const display of displays) {
 		const win = createOverlay(display);
 		win.setBounds(display.bounds);
+		applyOverlayWindowOptions(win);
 	}
 
 	for (const [id, win] of overlays) {
@@ -263,6 +335,9 @@ function broadcastState() {
 	}
 	if (controlWindow && !controlWindow.isDestroyed()) {
 		controlWindow.webContents.send("state", payload);
+	}
+	if (settingsWindow && !settingsWindow.isDestroyed()) {
+		settingsWindow.webContents.send("state", payload);
 	}
 }
 
@@ -329,7 +404,7 @@ function emitClick(click) {
 		? click
 		: screen.screenToDipPoint({ x: Number(click.x), y: Number(click.y) });
 	if (!click.test && isPointInsideControlWindow(point)) {
-		controlWindow.moveTop();
+		if (settings.controlAlwaysOnTop) controlWindow.moveTop();
 		return;
 	}
 
@@ -347,6 +422,7 @@ function emitClick(click) {
 			point.y >= y &&
 			point.y <= y + height;
 		if (inside || click.test) {
+			applyOverlayWindowOptions(win);
 			win.webContents.send("click", {
 				button: click.button || "left",
 				x: click.test ? point.x : point.x - x,
@@ -399,7 +475,20 @@ function startMouseHook() {
 		}
 	});
 
-	hookProcess.on("exit", () => {
+	hookProcess.stderr.on("data", (chunk) => {
+		console.error(`mouse hook error: ${chunk.toString().trim()}`);
+	});
+
+	hookProcess.on("error", (error) => {
+		console.error("mouse hook failed to start:", error);
+	});
+
+	hookProcess.on("exit", (code, signal) => {
+		if (!app.isQuitting) {
+			console.error(
+				`mouse hook exited; restarting. code=${code} signal=${signal}`,
+			);
+		}
 		hookProcess = null;
 		if (!app.isQuitting) setTimeout(startMouseHook, 1200);
 	});
@@ -409,7 +498,7 @@ app.whenReady().then(() => {
 	loadSavedState();
 
 	tray = new Tray(createTrayIcon());
-	tray.setToolTip("ClickGlow");
+	tray.setToolTip("RippleClick");
 	tray.on("click", toggleControlWindow);
 	updateTrayMenu();
 
@@ -442,8 +531,12 @@ ipcMain.on("set-launch-at-startup", (_event, value) => {
 });
 ipcMain.on("control-interaction", () => {
 	ignoreControlToggleUntil = Date.now() + 500;
-	if (controlWindow && !controlWindow.isDestroyed() && controlWindow.isVisible()) {
-		controlWindow.moveTop();
+	if (
+		controlWindow &&
+		!controlWindow.isDestroyed() &&
+		controlWindow.isVisible()
+	) {
+		if (settings.controlAlwaysOnTop) controlWindow.moveTop();
 	}
 });
 ipcMain.on("set-settings", (_event, value) => {
@@ -457,6 +550,10 @@ ipcMain.on("reset-settings", () => {
 	saveState();
 	applyControlWindowOptions();
 	broadcastState();
+});
+ipcMain.on("open-settings", showSettingsWindow);
+ipcMain.on("close-settings", () => {
+	if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.hide();
 });
 ipcMain.on("test-click", () =>
 	emitClick({ button: "left", x: 180, y: 180, test: true }),

@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0" />
+		<title>RippleClick Settings</title>
+		<link
+			rel="stylesheet"
+			href="./control.css" />
+	</head>
+	<body>
+		<main
+			class="control-app settings-app"
+			aria-label="RippleClick settings">
+			<section class="control-panel settings-panel">
+				<header class="panel-bar">
+					<div
+						class="brand"
+						aria-label="RippleClick">
+						<span
+							class="brand-mark"
+							aria-hidden="true">
+							<span class="material-symbols-rounded">ads_click</span>
+						</span>
+						<span class="brand-name">RippleClick settings</span>
+					</div>
+
+					<div class="window-tools">
+						<button
+							id="themeToggle"
+							class="theme-button"
+							type="button"
+							title="Theme"
+							aria-label="Toggle theme">
+							<span class="material-symbols-rounded">dark_mode</span>
+						</button>
+						<button
+							id="closeSettings"
+							class="icon-button"
+							type="button"
+							title="Close settings"
+							aria-label="Close settings">
+							<span class="material-symbols-rounded">close</span>
+						</button>
+					</div>
+				</header>
+
+				<div class="settings-layout">
+					<nav
+						class="settings-sidebar"
+						aria-label="Settings sections">
+						<button
+							type="button"
+							class="settings-tab active"
+							data-section="general">
+							<span class="material-symbols-rounded">tune</span>
+							General
+						</button>
+						<button
+							type="button"
+							class="settings-tab"
+							data-section="clicks">
+							<span class="material-symbols-rounded">mouse</span>
+							Clicks
+						</button>
+						<button
+							type="button"
+							class="settings-tab"
+							data-section="ripple">
+							<span class="material-symbols-rounded">radio_button_checked</span>
+							Ripple
+						</button>
+						<button
+							type="button"
+							class="settings-tab"
+							data-section="labels">
+							<span class="material-symbols-rounded">label</span>
+							Labels
+						</button>
+					</nav>
+
+					<div class="settings-content">
+						<section
+							class="settings-page active"
+							data-section-panel="general">
+							<div class="settings-heading">
+								<h1>General</h1>
+								<button
+									id="test"
+									class="primary-action"
+									type="button">
+									<span class="material-symbols-rounded">play_arrow</span>
+									Preview
+								</button>
+							</div>
+
+							<div class="settings-grid two">
+								<label class="share-chip"
+									><input
+										id="enabled"
+										type="checkbox" />Enabled</label
+								>
+								<label class="share-chip"
+									><input
+										id="keepOnTop"
+										type="checkbox" />Pin controller</label
+								>
+								<label class="share-chip"
+									><input
+										id="launchAtStartup"
+										type="checkbox" />Startup</label
+								>
+							</div>
+
+							<div class="settings-section">
+								<div class="section-title">
+									<span class="material-symbols-rounded">dashboard_customize</span>
+									Presets
+								</div>
+								<nav
+									class="mode-tabs"
+									aria-label="Highlight presets">
+									<button
+										type="button"
+										class="preset active"
+										data-preset="demo">
+										Demo
+									</button>
+									<button
+										type="button"
+										class="preset"
+										data-preset="review">
+										Review
+									</button>
+									<button
+										type="button"
+										class="preset"
+										data-preset="subtle">
+										Subtle
+									</button>
+								</nav>
+							</div>
+
+							<div class="settings-actions">
+								<button
+									id="resetPreset"
+									class="secondary-action"
+									type="button">
+									<span class="material-symbols-rounded">tune</span>
+									Reset preset
+								</button>
+								<button
+									id="reset"
+									class="secondary-action"
+									type="button">
+									<span class="material-symbols-rounded">restart_alt</span>
+									Reset all
+								</button>
+							</div>
+						</section>
+
+						<section
+							class="settings-page"
+							data-section-panel="clicks">
+							<div class="settings-heading">
+								<h1>Clicks</h1>
+							</div>
+
+							<div class="settings-card">
+								<div class="settings-card-title">Mouse buttons</div>
+								<div
+									class="check-grid"
+									aria-label="Mouse buttons">
+									<label title="Highlight left mouse clicks"
+										><input
+											id="left"
+											type="checkbox" />Left click</label
+									>
+									<label title="Highlight right mouse clicks"
+										><input
+											id="right"
+											type="checkbox" />Right click</label
+									>
+									<label title="Highlight middle mouse or wheel clicks"
+										><input
+											id="middle"
+											type="checkbox" />Wheel click</label
+									>
+								</div>
+							</div>
+
+							<div class="settings-card">
+								<div class="settings-card-title">Click colors</div>
+								<div class="settings-section section-colors settings-colors">
+									<label title="Highlight color"
+										><span>Primary</span
+										><input
+											id="color"
+											type="color"
+									/></label>
+									<label title="Use one color or one color per mouse button">
+										<span>Mode</span>
+										<select id="colorMode">
+											<option value="same">Same</option>
+											<option value="separate">Separate</option>
+										</select>
+									</label>
+									<label
+										class="button-color"
+										title="Left click color"
+										><span>Left</span
+										><input
+											id="leftColor"
+											type="color"
+									/></label>
+									<label
+										class="button-color"
+										title="Right click color"
+										><span>Right</span
+										><input
+											id="rightColor"
+											type="color"
+									/></label>
+									<label
+										class="button-color"
+										title="Wheel click color"
+										><span>Wheel</span
+										><input
+											id="middleColor"
+											type="color"
+									/></label>
+									<label title="Inner color"
+										><span>Inner</span
+										><input
+											id="secondaryColor"
+											type="color"
+									/></label>
+								</div>
+							</div>
+						</section>
+
+						<section
+							class="settings-page"
+							data-section-panel="ripple">
+							<div class="settings-heading">
+								<h1>Ripple</h1>
+							</div>
+
+							<div class="settings-card">
+								<div class="settings-card-title">Shape and timing</div>
+								<div
+									class="sliders"
+									aria-label="Ripple style">
+									<label>
+										<span>Size</span>
+										<input
+											id="size"
+											type="range"
+											min="48"
+											max="180"
+											step="4" />
+										<output id="sizeValue"></output>
+									</label>
+									<label>
+										<span>Fade</span>
+										<input
+											id="duration"
+											type="range"
+											min="260"
+											max="1400"
+											step="20" />
+										<output id="durationValue"></output>
+									</label>
+									<label>
+										<span>Stroke</span>
+										<input
+											id="stroke"
+											type="range"
+											min="2"
+											max="12"
+											step="1" />
+										<output id="strokeValue"></output>
+									</label>
+									<label>
+										<span>Glow</span>
+										<input
+											id="glow"
+											type="range"
+											min="0"
+											max="80"
+											step="4" />
+										<output id="glowValue"></output>
+									</label>
+									<label>
+										<span>Opacity</span>
+										<input
+											id="opacity"
+											type="range"
+											min="35"
+											max="100"
+											step="1" />
+										<output id="opacityValue"></output>
+									</label>
+								</div>
+							</div>
+
+							<div class="settings-card">
+								<div class="settings-card-title">Effects</div>
+								<div
+									class="check-grid"
+									aria-label="Ripple effects">
+									<label title="Draw a second ring around the click"
+										><input
+											id="doubleRing"
+											type="checkbox" />Double ring</label
+									>
+									<label title="Flash the center of the click"
+										><input
+											id="followThrough"
+											type="checkbox" />Center flash</label
+									>
+								</div>
+							</div>
+						</section>
+
+						<section
+							class="settings-page"
+							data-section-panel="labels">
+							<div class="settings-heading">
+								<h1>Labels</h1>
+							</div>
+
+							<label class="label-field settings-label-field">
+								<span>Label text</span>
+								<input
+									id="labelText"
+									type="text"
+									maxlength="18"
+									placeholder="Click"
+									aria-label="Click label" />
+							</label>
+
+							<div class="settings-grid two">
+								<label class="share-chip"
+									><input
+										id="showLabel"
+										type="checkbox" />Click label</label
+								>
+								<label
+									class="share-chip"
+									title="Show pressed keyboard keys on screen"
+									><input
+										id="showKeystrokes"
+										type="checkbox" />Show keys</label
+								>
+								<label title="Label position">
+									<span>Position</span>
+									<select id="labelPosition">
+										<option value="bottom">Bottom</option>
+										<option value="top">Top</option>
+									</select>
+								</label>
+								<label>
+									<span>Key duration</span>
+									<input
+										id="keystrokeDuration"
+										type="range"
+										min="500"
+										max="2400"
+										step="100" />
+									<output id="keystrokeDurationValue"></output>
+								</label>
+							</div>
+						</section>
+					</div>
+				</div>
+
+				<div
+					id="platformStatus"
+					class="status"
+					aria-live="polite">
+					<span class="status-dot"></span>
+					<span id="platformMessage">Checking platform support...</span>
+				</div>
+			</section>
+		</main>
+		<script src="./settings.js"></script>
+	</body>
+</html>

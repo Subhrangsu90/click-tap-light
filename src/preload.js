@@ -8,6 +8,8 @@ contextBridge.exposeInMainWorld('clickTapLight', {
   noteControlInteraction: () => ipcRenderer.send('control-interaction'),
   resetSettings: () => ipcRenderer.send('reset-settings'),
   testClick: () => ipcRenderer.send('test-click'),
+  openSettings: () => ipcRenderer.send('open-settings'),
+  closeSettings: () => ipcRenderer.send('close-settings'),
   minimizeControls: () => ipcRenderer.send('window-control', 'minimize'),
   closeControls: () => ipcRenderer.send('window-control', 'close'),
   onClick: (callback) => ipcRenderer.on('click', (_event, payload) => callback(payload)),
